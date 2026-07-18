@@ -14,12 +14,14 @@ AtividadeIA/
 │   ├── contexto.md               # Contextualização do projeto (vazio)
 │   ├── databases.md              # Documentação e DDL do banco de dados
 │   └── extrutura.md              # Este arquivo (descrição da estrutura)
-├── Aluno.cs                      # Modelo de dados e operações de persistência MySQL
+├── Aluno.cs                      # Modelo de dados e persistência MySQL do Aluno
+├── Turma.cs                      # Modelo de dados e persistência MySQL da Turma
 ├── AtividadeIA.csproj            # Configuração do projeto .NET 10
 └── Program.cs                    # Ponto de entrada do sistema
 ```
 
 ## Descrição dos Componentes Principais
 
-* **[Aluno.cs](file:///c:/Users/felipe.slsilva1/Desktop/conrado/AtividadeIA/AtividadeIA/Aluno.cs)**: Classe que une o modelo de domínio do Aluno (com as propriedades `id`, `nome`, `idade` e `curso`) e as operações de banco de dados (`Cadastrar`, `BuscarPorId` e `BuscarTodos`), seguindo o padrão de projeto *Active Record*.
-* **[Program.cs](file:///c:/Users/felipe.slsilva1/Desktop/conrado/AtividadeIA/AtividadeIA/Program.cs)**: Ponto de entrada que executa o fluxo da aplicação, conectando ao banco e invocando os métodos diretamente sobre a classe/objeto `Aluno`.
+* **[Aluno.cs](file:///c:/Users/felipe.slsilva1/Desktop/conrado/AtividadeIA/AtividadeIA/Aluno.cs)**: Classe que define o modelo do Aluno (com as propriedades `id`, `nome`, `idade`, `curso` e `turma_id`) e seus métodos Active Record (`Cadastrar`, `BuscarPorId` e `BuscarTodos`).
+* **[Turma.cs](file:///c:/Users/felipe.slsilva1/Desktop/conrado/AtividadeIA/AtividadeIA/Turma.cs)**: Classe que define a entidade Turma (com propriedades `id`, `nome` e `periodo`) e seus respectivos métodos Active Record de persistência (`Cadastrar`, `BuscarPorId` e `BuscarTodas`).
+* **[Program.cs](file:///c:/Users/felipe.slsilva1/Desktop/conrado/AtividadeIA/AtividadeIA/Program.cs)**: Ponto de entrada da aplicação que executa o fluxo demonstrativo do sistema, incluindo inserções, relacionamentos e buscas.

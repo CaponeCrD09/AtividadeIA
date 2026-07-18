@@ -10,19 +10,21 @@ public class Aluno
     public string nome { get; set; } = string.Empty;
     public int idade { get; set; }
     public string curso { get; set; } = string.Empty;
+    public int? turma_id { get; set; }
 
     // Construtor padrão
     public Aluno()
     {
     }
 
-    // Construtor parametrizado
-    public Aluno(int id, string nome, int idade, string curso)
+    // Construtor parametrizado (com suporte opcional a turma_id para manter compatibilidade)
+    public Aluno(int id, string nome, int idade, string curso, int? turma_id = null)
     {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
         this.curso = curso;
+        this.turma_id = turma_id;
     }
 
     // Função para cadastrar alunos (Active Record)
@@ -31,11 +33,12 @@ public class Aluno
         using var connection = new MySqlConnection(_connectionString);
         connection.Open();
 
-        string query = "INSERT INTO alunos (nome, idade, curso) VALUES (@nome, @idade, @curso);";
+        string query = "INSERT INTO alunos (nome, idade, curso, turma_id) VALUES (@nome, @idade, @curso, @turma_id);";
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@nome", this.nome);
         command.Parameters.AddWithValue("@idade", this.idade);
         command.Parameters.AddWithValue("@curso", this.curso);
+        command.Parameters.AddWithValue("@turma_id", (object?)this.turma_id ?? DBNull.Value);
         command.ExecuteNonQuery();
 
         // Recuperar o ID gerado automaticamente e atribuir ao próprio objeto
@@ -48,7 +51,7 @@ public class Aluno
         using var connection = new MySqlConnection(_connectionString);
         connection.Open();
 
-        string query = "SELECT id, nome, idade, curso FROM alunos WHERE id = @id;";
+        string query = "SELECT id, nome, idade, curso, turma_id FROM alunos WHERE id = @id;";
         using var command = new MySqlCommand(query, connection);
         command.Parameters.AddWithValue("@id", id);
 
@@ -59,7 +62,8 @@ public class Aluno
                 reader.GetInt32("id"),
                 reader.GetString("nome"),
                 reader.GetInt32("idade"),
-                reader.GetString("curso")
+                reader.GetString("curso"),
+                reader.IsDBNull(reader.GetOrdinal("turma_id")) ? null : reader.GetInt32("turma_id")
             );
         }
         return null;
@@ -72,7 +76,7 @@ public class Aluno
         using var connection = new MySqlConnection(_connectionString);
         connection.Open();
 
-        string query = "SELECT id, nome, idade, curso FROM alunos;";
+        string query = "SELECT id, nome, idade, curso, turma_id FROM alunos;";
         using var command = new MySqlCommand(query, connection);
 
         using var reader = command.ExecuteReader();
@@ -82,7 +86,8 @@ public class Aluno
                 reader.GetInt32("id"),
                 reader.GetString("nome"),
                 reader.GetInt32("idade"),
-                reader.GetString("curso")
+                reader.GetString("curso"),
+                reader.IsDBNull(reader.GetOrdinal("turma_id")) ? null : reader.GetInt32("turma_id")
             ));
         }
         return alunos;

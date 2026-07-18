@@ -1,6 +1,6 @@
 # Exemplos de Código
 
-Abaixo estão descritos exemplos práticos de como interagir com o banco de dados diretamente através da classe `Aluno`.
+Abaixo estão descritos exemplos práticos de como interagir com o banco de dados diretamente através das classes `Aluno` e `Turma`.
 
 ## 1. Conexão
 
@@ -10,49 +10,66 @@ using AtividadeIA;
 
 string connectionString = "Server=localhost; User ID=root;Password=;Database=escola;Port=3307";
 
-// Conexão aberta utilizando a variável conforme solicitado
+// Utilizando a conexão para validar e abrir a comunicação
 using var connection = new MySqlConnection(connectionString);
 connection.Open();
 ```
 
-## 2. Cadastrar Aluno (Método de Instância)
-
-O método `Cadastrar` insere o próprio objeto instanciado no banco de dados e preenche automaticamente a propriedade `id`.
+## 2. Fluxo Completo: Cadastrar Turma e Vincular Aluno
 
 ```csharp
-var novoAluno = new Aluno(0, "Ana Souza", 20, "Ciência da Computação");
-novoAluno.Cadastrar();
+// 1. Criar e cadastrar uma nova turma
+var turma = new Turma(0, "Turma A", "Noturno");
+turma.Cadastrar();
+Console.WriteLine($"Turma cadastrada com ID: {turma.id}");
 
-Console.WriteLine($"Aluno cadastrado com ID: {novoAluno.id}");
+// 2. Criar e cadastrar o aluno vinculado a essa turma
+var aluno = new Aluno(0, "Ana Souza", 20, "Ciência da Computação", turma.id);
+aluno.Cadastrar();
+Console.WriteLine($"Aluno cadastrado com ID: {aluno.id} vinculado à turma {aluno.turma_id}");
 ```
 
-## 3. Buscar Aluno por ID (Método Estático)
-
-O método estático `BuscarPorId` retorna um objeto `Aluno` se encontrado, ou `null` caso contrário.
+## 3. Buscar Turma por ID (Método Estático)
 
 ```csharp
 int idBusca = 1;
-Aluno? aluno = Aluno.BuscarPorId(idBusca);
+Turma? turma = Turma.BuscarPorId(idBusca);
 
-if (aluno != null)
+if (turma != null)
 {
-    Console.WriteLine($"Nome: {aluno.nome}, Curso: {aluno.curso}");
+    Console.WriteLine($"Turma: {turma.nome}, Período: {turma.periodo}");
 }
 else
 {
-    Console.WriteLine("Aluno não encontrado.");
+    Console.WriteLine("Turma não encontrada.");
 }
 ```
 
-## 4. Buscar Todos os Alunos (Método Estático)
-
-O método estático `BuscarTodos` retorna uma lista contendo todos os alunos cadastrados no banco de dados.
+## 4. Buscar Todas as Turmas (Método Estático)
 
 ```csharp
-List<Aluno> todos = Aluno.BuscarTodos();
+List<Turma> todasAsTurmas = Turma.BuscarTodas();
 
-foreach (var aluno in todos)
+foreach (var t in todasAsTurmas)
 {
-    Console.WriteLine($"[ID: {aluno.id}] {aluno.nome} - {aluno.curso}");
+    Console.WriteLine($"[ID: {t.id}] {t.nome} - {t.periodo}");
+}
+```
+
+## 5. Buscar Aluno por ID e Listar Todos os Alunos
+
+```csharp
+// Buscar por ID
+Aluno? alunoBuscado = Aluno.BuscarPorId(1);
+if (alunoBuscado != null)
+{
+    Console.WriteLine($"Aluno: {alunoBuscado.nome}, Turma ID: {alunoBuscado.turma_id}");
+}
+
+// Listar todos
+List<Aluno> todosOsAlunos = Aluno.BuscarTodos();
+foreach (var a in todosOsAlunos)
+{
+    Console.WriteLine($"[ID: {a.id}] {a.nome} (Turma ID: {a.turma_id})");
 }
 ```
